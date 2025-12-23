@@ -3,7 +3,7 @@ image:
   tag: b6453281e7413f3e35e8c7059130b503b763168e
   pullPolicy: Always
 
-replicaCount: 3
+replicaCount: 1
 
 resources:
   requests:
