@@ -37,10 +37,6 @@ image:
     tag: b6453281e7413f3e35e8c7059130b503b763168e
     pullPolicy: Always
 
-replicaCount:
-  coreApi: 3  # Increased for HA (HPA will manage scaling)
-  frontend: 1  # Increased for HA (HPA will manage scaling)
-
 # Resource requests/limits based on actual usage metrics
 # IMPORTANT: Current values are from IDLE state (no load)
 # Actual idle usage: Core API (2m CPU, 81Mi RAM), Frontend (1m CPU, 200Mi RAM)

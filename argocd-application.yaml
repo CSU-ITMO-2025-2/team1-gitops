@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   project: team1
-  
+
   source:
     repoURL: https://github.com/CSU-ITMO-2025-2/team1-gitops
     targetRevision: main
@@ -13,11 +13,11 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-  
+
   destination:
     server: https://kubernetes.default.svc
     namespace: team1-ns
-  
+
   syncPolicy:
     automated:
       prune: true
