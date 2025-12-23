@@ -25,20 +25,18 @@ rbac:
 
 probes:
   liveness:
-    httpGet:
-      path: /api/healthchecks/node
-      port: 15672
-    initialDelaySeconds: 60
+    tcpSocket:
+      port: 5672
+    initialDelaySeconds: 30
     periodSeconds: 30
-    timeoutSeconds: 10
+    timeoutSeconds: 5
     failureThreshold: 3
   readiness:
-    httpGet:
-      path: /api/healthchecks/node
-      port: 15672
-    initialDelaySeconds: 30
+    tcpSocket:
+      port: 5672
+    initialDelaySeconds: 10
     periodSeconds: 10
-    timeoutSeconds: 5
+    timeoutSeconds: 3
     failureThreshold: 3
 
 
