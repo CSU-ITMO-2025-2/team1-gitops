@@ -1,0 +1,43 @@
+---
+{{- $secretName := "" }}
+{{- if or .Values.rbac.enabled (and .Values.global.rbac .Values.global.rbac.enabled) }}
+{{- $secretName = printf "%s-workers-secrets" .Release.Name }}
+{{- else }}
+{{- $secretName = .Values.secret.name | default .Values.global.secretName | default (printf "%s-secrets" .Release.Name) }}
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-question-worker
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: question-worker
+  template:
+    metadata:
+      labels:
+        app: question-worker
+        egress: openai-via-squid
+    spec:
+      {{- if or .Values.rbac.enabled (and .Values.global.rbac .Values.global.rbac.enabled) }}
+      serviceAccountName: {{ .Release.Name }}-workers-sa
+      {{- end }}
+      containers:
+        - name: question-worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.configMap.name | default (printf "%s-config" .Release.Name) }}
+            - secretRef:
+                name: {{ $secretName }}
+          {{- if .Values.probes }}
+          livenessProbe:
+            {{- toYaml .Values.probes.liveness | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.probes.readiness | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+

@@ -1,0 +1,183 @@
+global:
+  configMapName: ""  # Будет использовано значение по умолчанию {{ .Release.Name }}-config
+  secretName: "team-1-secrets"  # Имя существующего secret. Если пусто, будет использовано значение по умолчанию {{ .Release.Name }}-secrets
+  rbac:
+    enabled: false  # Set to true to enable RBAC-based secret isolation (can be overridden in subcharts)
+
+# Replica counts for deployments
+replicaCount:
+  coreApi: 1
+  frontend: 1
+  workers: 1
+
+# Image configurations
+image:
+  authService:
+    repository: erofeevdma/aith-team1-auth-service
+    tag: latest
+    pullPolicy: Always
+  coreApi:
+    repository: docker.io/erofeevdma/aith-team1-core-api
+    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    pullPolicy: Always
+  frontend:
+    repository: docker.io/erofeevdma/aith-team1-frontend
+    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    pullPolicy: Always
+  resumeWorker:
+    repository: docker.io/erofeevdma/aith-team1-resume-evaluation-worker
+    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    pullPolicy: Always
+  jobDescrWorker:
+    repository: docker.io/erofeevdma/aith-team1-job-description-worker
+    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    pullPolicy: Always
+  questionWorker:
+    repository: docker.io/erofeevdma/aith-team1-question-generation-worker
+    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    pullPolicy: Always
+
+replicaCount:
+  coreApi: 3  # Increased for HA (HPA will manage scaling)
+  frontend: 1  # Increased for HA (HPA will manage scaling)
+
+# Resource requests/limits based on actual usage metrics
+# IMPORTANT: Current values are from IDLE state (no load)
+# Actual idle usage: Core API (2m CPU, 81Mi RAM), Frontend (1m CPU, 200Mi RAM)
+# TODO: Adjust after load testing or monitoring production traffic
+resources:
+  coreApi:
+    requests:
+      cpu: "100m"      # Conservative: allows 50x growth from idle
+      memory: "256Mi"  # Conservative: allows 3x growth (recommend monitoring)
+    limits:
+      cpu: "500m"      # Allow bursts during high load
+      memory: "512Mi"  # Original limit maintained
+  frontend:
+    requests:
+      cpu: "50m"       # Conservative: Streamlit can be heavier under load
+      memory: "256Mi"  # Already using 200Mi idle, needs headroom
+    limits:
+      cpu: "200m"      # Allow bursts
+      memory: "512Mi"  # Higher limit for peak usage
+
+# Autoscaling configuration
+autoscaling:
+  coreApi:
+    enabled: false # turn on
+    minReplicas: 2
+    maxReplicas: 5
+    targetMemoryUtilization: 70  # Scale when memory >70%
+  frontend:
+    enabled: false # turn on
+    minReplicas: 2
+    maxReplicas: 5
+    targetMemoryUtilization: 70
+
+rabbitmq:
+  image: rabbitmq:3.13-management-alpine
+  username: guest
+  password: "" 
+  vhost: "/"
+  port: 5672
+  uiPort: 15672
+
+postgres:
+  image: postgres:16
+  username: postgres
+  password: ""
+  db: hr_assist
+  port: 5432
+
+ingress:
+  enabled: true
+  host: ""
+  className: nginx
+  tls: false
+
+env:
+  openaiModelName: "gpt-4.1-mini"
+  openaiApiBase: "https://api.openai.com/v1"
+  logLevel: INFO
+
+secrets:
+  useExternal: True # используем Vault
+  useExisting: False # true для тестов
+  existingSecretName: "hr-assist-secrets"
+  
+  vault:
+    server: "https://vault.kubepractice.ru"  # URL внешнего Vault
+    mountPath: "secret"  # Mount path для KV секретов (secret или kv)
+    path: "team1/hr-assist"  # Путь к секретам в Vault
+    username: ""  # Имя пользователя для аутентификации в Vault
+    password: ""  # Пароль для аутентификации в Vault
+  
+  openaiApiKey: ""
+  kcClientSecret: ""
+  rabbitmqPassword: ""
+  postgresPassword: ""
+# временно пока не разобрались с external secrets
+
+# RBAC Configuration
+rbac:
+  enabled: false  # Set to true to enable RBAC-based secret isolation
+
+job-description-service:
+  image:
+    repository: docker.io/erofeevdma/aith-team1-job-description-worker
+    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    pullPolicy: Always
+  replicaCount: 3
+  configMap:
+    name: ""
+  secret:
+    name: "hr-assist-secrets"
+  # KEDA autoscaling configuration (queue-based)
+  autoscaling:
+    enabled: false # turn on
+    minReplicaCount: 1
+    maxReplicaCount: 5
+    queueName: "job_description_queue"
+    queueLength: 10  # Scale 1 replica per 10 messages in queue
+    rabbitmqHost: ""  # Will use RabbitMQ service name from parent chart
+
+question-generation-service:
+  image:
+    repository: docker.io/erofeevdma/aith-team1-question-generation-worker
+    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    pullPolicy: Always
+  replicaCount: 3
+  configMap:
+    name: ""
+  secret:
+    name: "hr-assist-secrets"
+  # KEDA autoscaling configuration (queue-based)
+  autoscaling:
+    enabled: false  # turn on
+    minReplicaCount: 1
+    maxReplicaCount: 5
+    queueName: "question_generation_queue"
+    queueLength: 10  # Scale 1 replica per 10 messages in queue
+    rabbitmqHost: ""  # Will use RabbitMQ service name from parent chart
+
+resume-evaluation-service:
+  image:
+    repository: docker.io/erofeevdma/aith-team1-resume-evaluation-worker
+    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    pullPolicy: Always
+  replicaCount: 3
+  configMap:
+    name: ""
+  secret:
+    name: "hr-assist-secrets"
+  # KEDA autoscaling configuration (queue-based)
+  autoscaling:
+    enabled: false  # turn on
+    minReplicaCount: 1
+    maxReplicaCount: 5
+    queueName: "resume_evaluation_queue"
+    queueLength: 10  # Scale 1 replica per 10 messages in queue
+    rabbitmqHost: ""  # Will use RabbitMQ service name from parent chart
+
+networkPolicy:
+  enabled: true  

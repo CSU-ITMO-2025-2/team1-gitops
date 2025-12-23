@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-rabbitmq
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - name: amqp
+      port: {{ .Values.port }}
+      targetPort: amqp
+    - name: management
+      port: {{ .Values.uiPort }}
+      targetPort: management
+    - name: prometheus
+      port: 15692
+      targetPort: prometheus
+
+
+
+
+
+
+

@@ -1,0 +1,44 @@
+image: rabbitmq:3.13-management-alpine
+username: guest
+vhost: "/"
+port: 5672
+uiPort: 15672
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: "200m"
+    memory: "512Mi"
+  limits:
+    cpu: "200m"
+    memory: "512Mi"
+
+configMap:
+  name: ""
+
+secret:
+  name: ""
+
+rbac:
+  enabled: false
+
+probes:
+  liveness:
+    httpGet:
+      path: /api/healthchecks/node
+      port: 15672
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+  readiness:
+    httpGet:
+      path: /api/healthchecks/node
+      port: 15672
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+

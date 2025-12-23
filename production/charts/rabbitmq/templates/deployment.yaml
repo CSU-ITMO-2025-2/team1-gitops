@@ -1,0 +1,64 @@
+---
+{{- $secretName := "" }}
+{{- if or .Values.rbac.enabled (and .Values.global.rbac .Values.global.rbac.enabled) }}
+{{- $secretName = printf "%s-rabbitmq-secrets" .Release.Name }}
+{{- else }}
+{{- $secretName = .Values.secret.name | default .Values.global.secretName | default (printf "%s-secrets" .Release.Name) }}
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-rabbitmq
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      {{- if or .Values.rbac.enabled (and .Values.global.rbac .Values.global.rbac.enabled) }}
+      serviceAccountName: {{ .Release.Name }}-rabbitmq-sa
+      {{- end }}
+      containers:
+        - name: rabbitmq
+          image: "{{ .Values.image }}"
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: {{ .Values.username | quote }}
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: RABBITMQ_DEFAULT_PASS
+            - name: RABBITMQ_DEFAULT_VHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configMap.name | default .Values.global.configMapName | default (printf "%s-config" .Release.Name) }}
+                  key: RABBITMQ_DEFAULT_VHOST
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              # Enable Prometheus plugin for KEDA metrics
+              rabbitmq-plugins enable rabbitmq_prometheus
+              # Start RabbitMQ server
+              docker-entrypoint.sh rabbitmq-server
+          ports:
+            - containerPort: {{ .Values.port }}
+              name: amqp
+            - containerPort: {{ .Values.uiPort }}
+              name: management
+            - containerPort: 15692
+              name: prometheus
+          {{- if .Values.probes }}
+          livenessProbe:
+            {{- toYaml .Values.probes.liveness | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.probes.readiness | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+

@@ -1,0 +1,49 @@
+---
+{{- $secretName := "" }}
+{{- if or .Values.rbac.enabled (and .Values.global.rbac .Values.global.rbac.enabled) }}
+{{- $secretName = printf "%s-postgres-secrets" .Release.Name }}
+{{- else }}
+{{- $secretName = .Values.secret.name | default .Values.global.secretName | default (printf "%s-secrets" .Release.Name) }}
+{{- end }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-postgres
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      {{- if or .Values.rbac.enabled (and .Values.global.rbac .Values.global.rbac.enabled) }}
+      serviceAccountName: {{ .Release.Name }}-postgres-sa
+      {{- end }}
+      containers:
+        - name: postgres
+          image: "{{ .Values.image }}"
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.username | quote }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secretName }}
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: {{ .Values.db | quote }}
+          ports:
+            - containerPort: {{ .Values.port }}
+          {{- if .Values.probes }}
+          livenessProbe:
+            {{- toYaml .Values.probes.liveness | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.probes.readiness | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+

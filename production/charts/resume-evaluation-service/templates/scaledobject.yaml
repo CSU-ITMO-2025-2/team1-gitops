@@ -1,0 +1,23 @@
+{{- if .Values.autoscaling.enabled }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ .Release.Name }}-resume-worker-scaler
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    name: {{ .Release.Name }}-resume-worker
+  minReplicaCount: {{ .Values.autoscaling.minReplicaCount }}
+  maxReplicaCount: {{ .Values.autoscaling.maxReplicaCount }}
+  pollingInterval: 30
+  cooldownPeriod: 300
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://{{ .Release.Name }}-rabbitmq.{{ .Release.Namespace }}.svc.cluster.local:15692
+      metricName: rabbitmq_queue_messages_ready
+      query: |
+        rabbitmq_queue_messages_ready{queue="{{ .Values.autoscaling.queueName }}"}
+      threshold: {{ .Values.autoscaling.queueLength | quote }}
+{{- end }}

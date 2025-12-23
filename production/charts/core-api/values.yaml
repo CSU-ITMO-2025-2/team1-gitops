@@ -1,0 +1,49 @@
+image:
+  repository: docker.io/erofeevdma/aith-team1-core-api
+  tag: b6453281e7413f3e35e8c7059130b503b763168e
+  pullPolicy: Always
+
+replicaCount: 3
+
+resources:
+  requests:
+    cpu: "300m"
+    memory: "512Mi"
+  limits:
+    cpu: "300m"
+    memory: "512Mi"
+
+configMap:
+  name: ""
+
+secret:
+  name: ""
+
+service:
+  port: 8000
+  targetPort: 8000
+
+rbac:
+  enabled: false
+
+probes:
+  liveness:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+
+
+
+

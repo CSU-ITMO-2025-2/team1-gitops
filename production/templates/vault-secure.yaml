@@ -1,0 +1,135 @@
+
+{{- if .Values.secrets.useExternal }}
+---
+# Shared SecretStore (unchanged)
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata:
+  name: {{ .Release.Name }}-vault-store
+spec:
+  provider:
+    vault:
+      server: "https://vault.kubepractice.ru"
+      path: "kv"
+      version: "v2"
+      auth:
+        userPass:
+          path: "userpass"
+          username: {{ .Values.secrets.vault.username | default "" | quote }}
+          password:
+            secretRef:
+              name: vault-credentials
+              key: password
+
+---
+# PostgreSQL Secrets ONLY
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Release.Name }}-postgres-secrets
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    kind: SecretStore
+    name: {{ .Release.Name }}-vault-store
+  target:
+    name: {{ .Release.Name }}-postgres-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: POSTGRES_PASSWORD
+      remoteRef:
+        key: team1/hr-assist/postgres  # Separate Vault path
+        property: POSTGRES_PASSWORD
+
+---
+# RabbitMQ Secrets ONLY
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Release.Name }}-rabbitmq-secrets
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    kind: SecretStore
+    name: {{ .Release.Name }}-vault-store
+  target:
+    name: {{ .Release.Name }}-rabbitmq-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: RABBITMQ_DEFAULT_PASS
+      remoteRef:
+        key: team1/hr-assist/rabbitmq
+        property: RABBITMQ_DEFAULT_PASS
+
+---
+# Core API Secrets (needs OpenAI, Postgres connection, RabbitMQ connection)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Release.Name }}-core-api-secrets
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    kind: SecretStore
+    name: {{ .Release.Name }}-vault-store
+  target:
+    name: {{ .Release.Name }}-core-api-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: OPENAI_API_KEY
+      remoteRef:
+        key: team1/hr-assist/shared
+        property: OPENAI_API_KEY
+    - secretKey: POSTGRES_PASSWORD
+      remoteRef:
+        key: team1/hr-assist/postgres
+        property: POSTGRES_PASSWORD
+    - secretKey: RABBITMQ_DEFAULT_PASS
+      remoteRef:
+        key: team1/hr-assist/rabbitmq
+        property: RABBITMQ_DEFAULT_PASS
+
+---
+# Workers Secrets (needs OpenAI, RabbitMQ)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Release.Name }}-workers-secrets
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    kind: SecretStore
+    name: {{ .Release.Name }}-vault-store
+  target:
+    name: {{ .Release.Name }}-workers-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: OPENAI_API_KEY
+      remoteRef:
+        key: team1/hr-assist/shared
+        property: OPENAI_API_KEY
+    - secretKey: RABBITMQ_DEFAULT_PASS
+      remoteRef:
+        key: team1/hr-assist/rabbitmq
+        property: RABBITMQ_DEFAULT_PASS
+
+---
+# Frontend Secrets (needs Keycloak client secret)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Release.Name }}-frontend-secrets
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    kind: SecretStore
+    name: {{ .Release.Name }}-vault-store
+  target:
+    name: {{ .Release.Name }}-frontend-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: KC_CLIENT_SECRET
+      remoteRef:
+        key: team1/hr-assist/auth
+        property: KC_CLIENT_SECRET
+{{- end }}
