@@ -1,27 +1,6 @@
 
 {{- if .Values.secrets.useExternal }}
 ---
-# Shared SecretStore (unchanged)
-apiVersion: external-secrets.io/v1
-kind: SecretStore
-metadata:
-  name: vault-team1
-spec:
-  provider:
-    vault:
-      server: "https://vault.kubepractice.ru"
-      path: "kv"
-      version: "v2"
-      auth:
-        userPass:
-          path: "userpass"
-          username: {{ .Values.secrets.vault.username | default "" | quote }}
-          password:
-            secretRef:
-              name: vault-credentials
-              key: password
-
----
 # PostgreSQL Secrets ONLY
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret

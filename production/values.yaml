@@ -113,12 +113,8 @@ secrets:
   useExisting: False # true для тестов
   existingSecretName: "hr-assist-secrets"
   
-  vault:
-    server: "https://vault.kubepractice.ru"  # URL внешнего Vault
-    mountPath: "secret"  # Mount path для KV секретов (secret или kv)
-    path: "team1/hr-assist"  # Путь к секретам в Vault
-    username: "team1"  # Имя пользователя для аутентификации в Vault
-    password: ""  # Пароль для аутентификации в Vault
+  # Используем существующий SecretStore vault-team1 (создан администратором)
+  # Vault конфигурация не требуется
   
   openaiApiKey: ""
   kcClientSecret: ""
