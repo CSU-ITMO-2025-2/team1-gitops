@@ -4,6 +4,10 @@ global:
   rbac:
     enabled: false  # Set to true to enable RBAC-based secret isolation (can be overridden in subcharts)
 
+# Image pull secrets для GHCR
+imagePullSecrets:
+  - name: ghcr-secret
+
 # Replica counts for deployments
 replicaCount:
   coreApi: 1
@@ -13,28 +17,28 @@ replicaCount:
 # Image configurations
 image:
   authService:
-    repository: erofeevdma/aith-team1-auth-service
+    repository: ghcr.io/csu-itmo-2025-2/team1-auth-service
     tag: latest
     pullPolicy: Always
   coreApi:
-    repository: docker.io/erofeevdma/aith-team1-core-api
-    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    repository: ghcr.io/csu-itmo-2025-2/team1-core-api
+    tag: sha-b645328
     pullPolicy: Always
   frontend:
-    repository: docker.io/erofeevdma/aith-team1-frontend
-    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    repository: ghcr.io/csu-itmo-2025-2/team1-frontend
+    tag: sha-b645328
     pullPolicy: Always
   resumeWorker:
-    repository: docker.io/erofeevdma/aith-team1-resume-evaluation-worker
-    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
+    tag: sha-b645328
     pullPolicy: Always
   jobDescrWorker:
-    repository: docker.io/erofeevdma/aith-team1-job-description-worker
-    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
+    tag: sha-b645328
     pullPolicy: Always
   questionWorker:
-    repository: docker.io/erofeevdma/aith-team1-question-generation-worker
-    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
+    tag: sha-b645328
     pullPolicy: Always
 
 # Resource requests/limits based on actual usage metrics
@@ -60,12 +64,12 @@ resources:
 # Autoscaling configuration
 autoscaling:
   coreApi:
-    enabled: false # turn on
+    enabled: true  
     minReplicas: 2
     maxReplicas: 5
-    targetMemoryUtilization: 70  # Scale when memory >70%
+    targetMemoryUtilization: 70  
   frontend:
-    enabled: false # turn on
+    enabled: true 
     minReplicas: 2
     maxReplicas: 5
     targetMemoryUtilization: 70
@@ -92,27 +96,25 @@ ingress:
   tls: false
 
 env:
-  openaiModelName: "gpt-4.1-mini"
+  openaiModelName: "gpt-4o-mini"
   openaiApiBase: "https://api.openai.com/v1"
   logLevel: INFO
+  # PostgreSQL (внутренний)
+  POSTGRES_HOST: "team1-project-postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "hr_assist"
+  POSTGRES_USER: "postgres"
+  # RabbitMQ (внутренний)
+  RABBITMQ_DEFAULT_HOST: "team1-project-rabbitmq"
+  RABBITMQ_PORT: "5672"
 
 secrets:
   useExternal: True # используем Vault
   useExisting: False # true для тестов
   existingSecretName: "hr-assist-secrets"
   
-  vault:
-    server: "https://vault.kubepractice.ru"  # URL внешнего Vault
-    mountPath: "secret"  # Mount path для KV секретов (secret или kv)
-    path: "team1/hr-assist"  # Путь к секретам в Vault
-    username: ""  # Имя пользователя для аутентификации в Vault
-    password: ""  # Пароль для аутентификации в Vault
-  
-  openaiApiKey: ""
-  kcClientSecret: ""
-  rabbitmqPassword: ""
-  postgresPassword: ""
-# временно пока не разобрались с external secrets
+  # Используем существующий SecretStore vault-team1 (создан администратором)
+  # Vault конфигурация не требуется
 
 # RBAC Configuration
 rbac:
@@ -120,17 +122,17 @@ rbac:
 
 job-description-service:
   image:
-    repository: docker.io/erofeevdma/aith-team1-job-description-worker
-    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
+    tag: sha-b645328
     pullPolicy: Always
   replicaCount: 3
   configMap:
     name: ""
   secret:
-    name: "hr-assist-secrets"
+    name: ""
   # KEDA autoscaling configuration (queue-based)
   autoscaling:
-    enabled: false # turn on
+    enabled: true  # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
     queueName: "job_description_queue"
@@ -139,17 +141,17 @@ job-description-service:
 
 question-generation-service:
   image:
-    repository: docker.io/erofeevdma/aith-team1-question-generation-worker
-    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
+    tag: sha-b645328
     pullPolicy: Always
   replicaCount: 3
   configMap:
     name: ""
   secret:
-    name: "hr-assist-secrets"
+    name: ""
   # KEDA autoscaling configuration (queue-based)
   autoscaling:
-    enabled: false  # turn on
+    enabled: true  # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
     queueName: "question_generation_queue"
@@ -158,17 +160,17 @@ question-generation-service:
 
 resume-evaluation-service:
   image:
-    repository: docker.io/erofeevdma/aith-team1-resume-evaluation-worker
-    tag: b6453281e7413f3e35e8c7059130b503b763168e
+    repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
+    tag: sha-b645328
     pullPolicy: Always
   replicaCount: 3
   configMap:
     name: ""
   secret:
-    name: "hr-assist-secrets"
+    name: ""
   # KEDA autoscaling configuration (queue-based)
   autoscaling:
-    enabled: false  # turn on
+    enabled: true  # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
     queueName: "resume_evaluation_queue"

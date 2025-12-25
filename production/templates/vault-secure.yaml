@@ -1,27 +1,6 @@
 
 {{- if .Values.secrets.useExternal }}
 ---
-# Shared SecretStore (unchanged)
-apiVersion: external-secrets.io/v1
-kind: SecretStore
-metadata:
-  name: vault-team1
-spec:
-  provider:
-    vault:
-      server: "https://vault.kubepractice.ru"
-      path: "kv"
-      version: "v2"
-      auth:
-        userPass:
-          path: "userpass"
-          username: {{ .Values.secrets.vault.username | default "" | quote }}
-          password:
-            secretRef:
-              name: vault-credentials
-              key: password
-
----
 # PostgreSQL Secrets ONLY
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -38,7 +17,7 @@ spec:
   data:
     - secretKey: POSTGRES_PASSWORD
       remoteRef:
-        key: team1/hr-assist/postgres  # Separate Vault path
+        key: team1/postgres
         property: POSTGRES_PASSWORD
 
 ---
@@ -58,7 +37,7 @@ spec:
   data:
     - secretKey: RABBITMQ_DEFAULT_PASS
       remoteRef:
-        key: team1/hr-assist/rabbitmq
+        key: team1/rabbitmq
         property: RABBITMQ_DEFAULT_PASS
 
 ---
@@ -78,15 +57,15 @@ spec:
   data:
     - secretKey: OPENAI_API_KEY
       remoteRef:
-        key: team1/hr-assist/shared
+        key: team1/shared
         property: OPENAI_API_KEY
     - secretKey: POSTGRES_PASSWORD
       remoteRef:
-        key: team1/hr-assist/postgres
+        key: team1/postgres
         property: POSTGRES_PASSWORD
     - secretKey: RABBITMQ_DEFAULT_PASS
       remoteRef:
-        key: team1/hr-assist/rabbitmq
+        key: team1/rabbitmq
         property: RABBITMQ_DEFAULT_PASS
 
 ---
@@ -106,30 +85,11 @@ spec:
   data:
     - secretKey: OPENAI_API_KEY
       remoteRef:
-        key: team1/hr-assist/shared
+        key: team1/shared
         property: OPENAI_API_KEY
     - secretKey: RABBITMQ_DEFAULT_PASS
       remoteRef:
-        key: team1/hr-assist/rabbitmq
+        key: team1/rabbitmq
         property: RABBITMQ_DEFAULT_PASS
 
----
-# Frontend Secrets (needs Keycloak client secret)
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: {{ .Release.Name }}-frontend-secrets
-spec:
-  refreshInterval: 1m
-  secretStoreRef:
-    kind: SecretStore
-    name: vault-team1
-  target:
-    name: {{ .Release.Name }}-frontend-secrets
-    creationPolicy: Owner
-  data:
-    - secretKey: KC_CLIENT_SECRET
-      remoteRef:
-        key: team1/hr-assist/auth
-        property: KC_CLIENT_SECRET
 {{- end }}

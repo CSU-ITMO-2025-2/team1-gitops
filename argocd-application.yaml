@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: team1
+  name: team1-project
   namespace: argocd
 spec:
   project: team1
 
   source:
     repoURL: https://github.com/CSU-ITMO-2025-2/team1-gitops
-    targetRevision: main
+    targetRevision: HEAD
     path: production
     helm:
       valueFiles:
