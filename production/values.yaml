@@ -115,12 +115,6 @@ secrets:
   
   # Используем существующий SecretStore vault-team1 (создан администратором)
   # Vault конфигурация не требуется
-  
-  openaiApiKey: ""
-  kcClientSecret: ""
-  rabbitmqPassword: ""
-  postgresPassword: ""
-# временно пока не разобрались с external secrets
 
 # RBAC Configuration
 rbac:
@@ -135,7 +129,7 @@ job-description-service:
   configMap:
     name: ""
   secret:
-    name: "hr-assist-secrets"
+    name: ""
   # KEDA autoscaling configuration (queue-based)
   autoscaling:
     enabled: true  # Включено для production
@@ -154,7 +148,7 @@ question-generation-service:
   configMap:
     name: ""
   secret:
-    name: "hr-assist-secrets"
+    name: ""
   # KEDA autoscaling configuration (queue-based)
   autoscaling:
     enabled: true  # Включено для production
@@ -173,7 +167,7 @@ resume-evaluation-service:
   configMap:
     name: ""
   secret:
-    name: "hr-assist-secrets"
+    name: ""
   # KEDA autoscaling configuration (queue-based)
   autoscaling:
     enabled: true  # Включено для production
