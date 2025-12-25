@@ -13,11 +13,12 @@ spec:
   pollingInterval: 30
   cooldownPeriod: 300
   triggers:
-  - type: prometheus
+  - type: rabbitmq
     metadata:
-      serverAddress: http://{{ .Release.Name }}-rabbitmq.{{ .Release.Namespace }}.svc.cluster.local:15692
-      metricName: rabbitmq_queue_messages_ready
-      query: |
-        rabbitmq_queue_messages_ready{queue="{{ .Values.autoscaling.queueName }}"}
-      threshold: {{ .Values.autoscaling.queueLength | quote }}
+      protocol: http
+      host: {{ .Release.Name }}-rabbitmq.{{ .Release.Namespace }}.svc.cluster.local
+      port: "15672"
+      queueName: {{ .Values.autoscaling.queueName }}
+      queueLength: {{ .Values.autoscaling.queueLength | quote }}
+      vhostName: "/"
 {{- end }}
