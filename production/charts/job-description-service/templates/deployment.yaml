@@ -21,6 +21,10 @@ spec:
         app: job-descr-worker
         egress: openai-via-squid
     spec:
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
       {{- if or .Values.rbac.enabled (and .Values.global.rbac .Values.global.rbac.enabled) }}
       serviceAccountName: {{ .Release.Name }}-workers-sa
       {{- end }}
