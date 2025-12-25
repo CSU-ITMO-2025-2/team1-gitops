@@ -18,4 +18,6 @@ spec:
       host: http://{{ .Release.Name }}-rabbitmq.{{ .Release.Namespace }}.svc.cluster.local:15672
       queueName: {{ .Values.autoscaling.queueName }}
       queueLength: {{ .Values.autoscaling.queueLength | quote }}
+    authenticationRef:
+      name: {{ .Release.Name }}-rabbitmq-trigger-auth
 {{- end }}
