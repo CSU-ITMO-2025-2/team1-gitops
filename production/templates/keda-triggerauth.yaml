@@ -1,0 +1,15 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: {{ .Release.Name }}-rabbitmq-trigger-auth
+  namespace: {{ .Release.Namespace }}
+spec:
+  secretTargetRef:
+    - parameter: username
+      name: {{ .Release.Name }}-rabbitmq-secrets
+      key: RABBITMQ_DEFAULT_USER
+    - parameter: password
+      name: {{ .Release.Name }}-rabbitmq-secrets
+      key: RABBITMQ_DEFAULT_PASS
+
