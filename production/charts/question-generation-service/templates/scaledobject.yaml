@@ -15,10 +15,7 @@ spec:
   triggers:
   - type: rabbitmq
     metadata:
-      protocol: http
-      host: {{ .Release.Name }}-rabbitmq.{{ .Release.Namespace }}.svc.cluster.local
-      port: "15672"
+      host: http://{{ .Release.Name }}-rabbitmq.{{ .Release.Namespace }}.svc.cluster.local:15672
       queueName: {{ .Values.autoscaling.queueName }}
       queueLength: {{ .Values.autoscaling.queueLength | quote }}
-      vhostName: "/"
 {{- end }}
