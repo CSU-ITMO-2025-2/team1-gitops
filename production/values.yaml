@@ -55,7 +55,7 @@ resources:
 # Autoscaling configuration
 autoscaling:
   coreApi:
-    enabled: true
+    enabled: false  # Отключено: core-api использует Argo Rollout (не поддерживает HPA)
     minReplicas: 1
     maxReplicas: 5
     targetMemoryUtilization: 70
