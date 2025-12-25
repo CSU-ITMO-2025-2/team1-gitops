@@ -24,3 +24,10 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=false
+  
+  # Игнорировать различия в replicas (HPA/KEDA управляют ими)
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
