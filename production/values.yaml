@@ -6,12 +6,9 @@ global:
 # Image pull secrets для GHCR
 imagePullSecrets:
   - name: ghcr-secret
-# Replica counts for deployments
-replicaCount:
-  coreApi: 1
-  frontend: 1
-  workers: 1
+
 # Image configurations
+# Note: replicaCount управляется HPA для coreApi/frontend и KEDA для workers
 image:
   authService:
     repository: ghcr.io/csu-itmo-2025-2/team1-auth-service
@@ -112,7 +109,7 @@ job-description-service:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
     tag: sha-cd8ca64
     pullPolicy: Always
-  replicaCount: 3
+  # replicaCount управляется KEDA
   configMap:
     name: ""
   secret:
@@ -130,7 +127,7 @@ question-generation-service:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
     tag: sha-cd8ca64
     pullPolicy: Always
-  replicaCount: 3
+  # replicaCount управляется KEDA
   configMap:
     name: ""
   secret:
@@ -148,7 +145,7 @@ resume-evaluation-service:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
     tag: sha-cd8ca64
     pullPolicy: Always
-  replicaCount: 3
+  # replicaCount управляется KEDA
   configMap:
     name: ""
   secret:
