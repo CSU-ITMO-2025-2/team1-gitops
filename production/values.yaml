@@ -160,7 +160,3 @@ resume-evaluation-service:
     rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
 networkPolicy:
   enabled: true
-
-# Monitoring configuration
-monitoring:
-  enabled: true  # Включить ServiceMonitor для Prometheus
