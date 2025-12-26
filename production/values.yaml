@@ -15,23 +15,23 @@ image:
     pullPolicy: Always
   coreApi:
     repository: ghcr.io/csu-itmo-2025-2/team1-core-api
-    tag: sha-23c10e5
+    tag: sha-79af7ba
     pullPolicy: Always
   frontend:
     repository: ghcr.io/csu-itmo-2025-2/team1-frontend
-    tag: sha-23c10e5
+    tag: sha-79af7ba
     pullPolicy: Always
   resumeWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
-    tag: sha-23c10e5
+    tag: sha-79af7ba
     pullPolicy: Always
   jobDescrWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
-    tag: sha-23c10e5
+    tag: sha-79af7ba
     pullPolicy: Always
   questionWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
-    tag: sha-23c10e5
+    tag: sha-79af7ba
     pullPolicy: Always
 # Resource requests/limits based on actual usage metrics
 # IMPORTANT: Current values are from IDLE state (no load)
@@ -55,7 +55,7 @@ resources:
 # Autoscaling configuration
 autoscaling:
   coreApi:
-    enabled: false  # Отключено: core-api использует Argo Rollout (не поддерживает HPA)
+    enabled: false # Отключено: core-api использует Argo Rollout (не поддерживает HPA)
     minReplicas: 1
     maxReplicas: 5
     targetMemoryUtilization: 70
@@ -106,7 +106,7 @@ rbac:
 job-description-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
-    tag: sha-23c10e5
+    tag: sha-79af7ba
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
@@ -124,7 +124,7 @@ job-description-service:
 question-generation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
-    tag: sha-23c10e5
+    tag: sha-79af7ba
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
@@ -142,7 +142,7 @@ question-generation-service:
 resume-evaluation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
-    tag: sha-23c10e5
+    tag: sha-79af7ba
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
