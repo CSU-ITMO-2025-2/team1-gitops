@@ -18,7 +18,6 @@ spec:
     metadata:
       labels:
         app: resume-worker
-        egress: openai-via-squid
     spec:
       {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:
