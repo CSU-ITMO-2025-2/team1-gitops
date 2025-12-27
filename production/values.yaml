@@ -86,6 +86,10 @@ env:
   openaiModelName: "gpt-4o-mini"
   openaiApiBase: "https://api.openai.com/v1"
   logLevel: INFO
+  # Proxy configuration for external API access via Squid
+  HTTP_PROXY: "http://109.120.129.63:48011"
+  HTTPS_PROXY: "http://109.120.129.63:48011"
+  NO_PROXY: "localhost,127.0.0.1,.svc,.cluster.local,team1-project-rabbitmq,team1-project-postgres"
   # PostgreSQL (внутренний)
   POSTGRES_HOST: "team1-project-postgres"
   POSTGRES_PORT: "5432"
