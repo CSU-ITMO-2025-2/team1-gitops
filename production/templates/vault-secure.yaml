@@ -112,4 +112,23 @@ spec:
         key: team1/rabbitmq
         property: RABBITMQ_DEFAULT_PASS
 
+---
+# Frontend Secrets (empty - frontend uses only ConfigMap)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Release.Name }}-frontend-secrets
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    kind: SecretStore
+    name: vault-team1
+  target:
+    name: {{ .Release.Name }}-frontend-secrets
+    creationPolicy: Owner
+    template:
+      data:
+        # Dummy secret to satisfy deployment requirement
+        DUMMY: "placeholder"
+
 {{- end }}
