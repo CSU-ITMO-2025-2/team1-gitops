@@ -2,7 +2,7 @@ global:
   configMapName: "" # Будет использовано значение по умолчанию {{ .Release.Name }}-config
   secretName: "team-1-secrets" # Имя существующего secret. Если пусто, будет использовано значение по умолчанию {{ .Release.Name }}-secrets
   rbac:
-    enabled: false # Set to true to enable RBAC-based secret isolation (can be overridden in subcharts)
+    enabled: true # Set to true to enable RBAC-based secret isolation (can be overridden in subcharts)
 # Image pull secrets для GHCR
 imagePullSecrets:
   - name: ghcr-secret
@@ -102,7 +102,7 @@ secrets:
   # Vault конфигурация не требуется
 # RBAC Configuration
 rbac:
-  enabled: false # Set to true to enable RBAC-based secret isolation
+  enabled: true # Set to true to enable RBAC-based secret isolation
 job-description-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
