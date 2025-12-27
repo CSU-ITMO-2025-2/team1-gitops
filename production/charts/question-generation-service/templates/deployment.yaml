@@ -18,7 +18,6 @@ spec:
     metadata:
       labels:
         app: question-worker
-        egress: openai-via-squid
     spec:
       {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:
