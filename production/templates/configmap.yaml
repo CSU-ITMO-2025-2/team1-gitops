@@ -33,3 +33,8 @@ data:
 
   # Логирование
   LOG_LEVEL: {{ .Values.env.logLevel | quote }}
+
+  # Proxy configuration for external API access
+  HTTP_PROXY: {{ .Values.env.HTTP_PROXY | quote }}
+  HTTPS_PROXY: {{ .Values.env.HTTPS_PROXY | quote }}
+  NO_PROXY: {{ .Values.env.NO_PROXY | quote }}
