@@ -113,7 +113,7 @@ spec:
         property: RABBITMQ_DEFAULT_PASS
 
 ---
-# Frontend Secrets (empty - frontend uses only ConfigMap)
+# Frontend Secrets (minimal - frontend uses only ConfigMap)
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
@@ -126,9 +126,8 @@ spec:
   target:
     name: {{ .Release.Name }}-frontend-secrets
     creationPolicy: Owner
-    template:
-      data:
-        # Dummy secret to satisfy deployment requirement
-        DUMMY: "placeholder"
+  dataFrom:
+    - extract:
+        key: team1/frontend
 
 {{- end }}
