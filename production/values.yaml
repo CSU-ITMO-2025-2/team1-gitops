@@ -60,7 +60,7 @@ autoscaling:
     maxReplicas: 5
     targetMemoryUtilization: 70
   frontend:
-    enabled: true
+    enabled: false  # Отключено: Streamlit stateful, требует sticky sessions
     minReplicas: 1
     maxReplicas: 5
     targetMemoryUtilization: 70
