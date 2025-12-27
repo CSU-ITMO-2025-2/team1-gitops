@@ -118,7 +118,7 @@ job-description-service:
     enabled: true # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
-    queueName: "job_description_queue"
+    queueName: "job_description_task"
     queueLength: 10 # Scale 1 replica per 10 messages in queue
     rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
 question-generation-service:
@@ -136,7 +136,7 @@ question-generation-service:
     enabled: true # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
-    queueName: "question_generation_queue"
+    queueName: "question_generation_task"
     queueLength: 10 # Scale 1 replica per 10 messages in queue
     rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
 resume-evaluation-service:
@@ -154,7 +154,7 @@ resume-evaluation-service:
     enabled: true # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
-    queueName: "resume_evaluation_queue"
+    queueName: "resume_evaluation_task"
     queueLength: 10 # Scale 1 replica per 10 messages in queue
     rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
 networkPolicy:
