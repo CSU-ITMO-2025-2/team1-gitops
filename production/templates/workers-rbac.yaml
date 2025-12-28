@@ -1,13 +1,11 @@
 {{- if or .Values.rbac.enabled (and .Values.global.rbac .Values.global.rbac.enabled) }}
 ---
-# ServiceAccount for all workers
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Release.Name }}-workers-sa
 
 ---
-# Role: allows workers to read their shared secrets
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -19,7 +17,6 @@ rules:
     verbs: ["get", "list"]
 
 ---
-# RoleBinding: binds the role to the ServiceAccount
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:

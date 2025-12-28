@@ -18,6 +18,10 @@ spec:
     metadata:
       labels:
         app: core-api
+      {{- if or .Values.istio.enabled (and .Values.global.istio .Values.global.istio.enabled) }}
+      annotations:
+        sidecar.istio.io/inject: "true"
+      {{- end }}
     spec:
       {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:

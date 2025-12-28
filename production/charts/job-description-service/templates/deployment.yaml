@@ -11,7 +11,6 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-job-descr-worker
 spec:
-  # replicas управляется KEDA
   selector:
     matchLabels:
       app: job-descr-worker

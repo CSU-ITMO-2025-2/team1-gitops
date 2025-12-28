@@ -1,13 +1,18 @@
 global:
-  configMapName: "" # Будет использовано значение по умолчанию {{ .Release.Name }}-config
-  secretName: "team-1-secrets" # Имя существующего secret. Если пусто, будет использовано значение по умолчанию {{ .Release.Name }}-secrets
+  configMapName: ""
+  secretName: "team-1-secrets"
   rbac:
-    enabled: true # Set to true to enable RBAC-based secret isolation (can be overridden in subcharts)
-# Image pull secrets для GHCR
+    enabled: true
+  istio:
+    enabled: false
+
+namespace:
+  create: false
+  name: ""
+  istio:
+    enabled: false
 imagePullSecrets:
   - name: ghcr-secret
-# Image configurations
-# Note: replicaCount управляется HPA для coreApi/frontend и KEDA для workers
 image:
   authService:
     repository: ghcr.io/csu-itmo-2025-2/team1-auth-service
@@ -33,34 +38,29 @@ image:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
     tag: sha-fd233a5
     pullPolicy: Always
-# Resource requests/limits based on actual usage metrics
-# IMPORTANT: Current values are from IDLE state (no load)
-# Actual idle usage: Core API (2m CPU, 81Mi RAM), Frontend (1m CPU, 200Mi RAM)
-# TODO: Adjust after load testing or monitoring production traffic
 resources:
   coreApi:
     requests:
-      cpu: "100m" # Conservative: allows 50x growth from idle
-      memory: "256Mi" # Conservative: allows 3x growth (recommend monitoring)
+      cpu: "100m"
+      memory: "256Mi"
     limits:
-      cpu: "500m" # Allow bursts during high load
-      memory: "512Mi" # Original limit maintained
+      cpu: "500m"
+      memory: "512Mi"
   frontend:
     requests:
-      cpu: "50m" # Conservative: Streamlit can be heavier under load
-      memory: "256Mi" # Already using 200Mi idle, needs headroom
+      cpu: "50m"
+      memory: "256Mi"
     limits:
-      cpu: "200m" # Allow bursts
-      memory: "512Mi" # Higher limit for peak usage
-# Autoscaling configuration
+      cpu: "200m"
+      memory: "512Mi"
 autoscaling:
   coreApi:
-    enabled: false # Отключено: core-api использует Argo Rollout (не поддерживает HPA)
+    enabled: false
     minReplicas: 1
     maxReplicas: 5
     targetMemoryUtilization: 70
   frontend:
-    enabled: false # Отключено: Streamlit stateful, требует sticky sessions
+    enabled: false
     minReplicas: 1
     maxReplicas: 5
     targetMemoryUtilization: 70
@@ -86,76 +86,65 @@ env:
   openaiModelName: "gpt-4o-mini"
   openaiApiBase: "https://api.openai.com/v1"
   logLevel: INFO
-  # PostgreSQL (внутренний)
   POSTGRES_HOST: "team1-project-postgres"
   POSTGRES_PORT: "5432"
   POSTGRES_DB: "hr_assist"
   POSTGRES_USER: "postgres"
-  # RabbitMQ (внутренний)
   RABBITMQ_DEFAULT_HOST: "team1-project-rabbitmq"
   RABBITMQ_PORT: "5672"
 secrets:
-  useExternal: True # используем Vault
-  useExisting: False # true для тестов
+  useExternal: True
+  useExisting: False
   existingSecretName: "hr-assist-secrets"
-  # Используем существующий SecretStore vault-team1 (создан администратором)
-  # Vault конфигурация не требуется
-# RBAC Configuration
 rbac:
-  enabled: true # Set to true to enable RBAC-based secret isolation
+  enabled: true
 job-description-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
     tag: sha-fd233a5
     pullPolicy: Always
-  # replicaCount управляется KEDA
   configMap:
     name: ""
   secret:
     name: ""
-  # KEDA autoscaling configuration (queue-based)
   autoscaling:
-    enabled: true # Включено для production
+    enabled: true
     minReplicaCount: 1
     maxReplicaCount: 5
     queueName: "job_description_task"
-    queueLength: 10 # Scale 1 replica per 10 messages in queue
-    rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
+    queueLength: 10
+    rabbitmqHost: ""
 question-generation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
     tag: sha-fd233a5
     pullPolicy: Always
-  # replicaCount управляется KEDA
   configMap:
     name: ""
   secret:
     name: ""
-  # KEDA autoscaling configuration (queue-based)
   autoscaling:
-    enabled: true # Включено для production
+    enabled: true
     minReplicaCount: 1
     maxReplicaCount: 5
     queueName: "question_generation_task"
-    queueLength: 10 # Scale 1 replica per 10 messages in queue
-    rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
+    queueLength: 10
+    rabbitmqHost: ""
 resume-evaluation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
     tag: sha-fd233a5
     pullPolicy: Always
-  # replicaCount управляется KEDA
   configMap:
     name: ""
   secret:
     name: ""
-  # KEDA autoscaling configuration (queue-based)
   autoscaling:
-    enabled: true # Включено для production
+    enabled: true
     minReplicaCount: 1
     maxReplicaCount: 5
     queueName: "resume_evaluation_task"
-    queueLength: 10 # Scale 1 replica per 10 messages in queue
-    rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
+    queueLength: 10
+    rabbitmqHost: ""
 networkPolicy:
   enabled: true

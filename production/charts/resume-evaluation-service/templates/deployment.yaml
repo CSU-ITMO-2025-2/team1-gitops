@@ -10,7 +10,6 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-resume-worker
 spec:
-  # replicas управляется KEDA
   selector:
     matchLabels:
       app: resume-worker

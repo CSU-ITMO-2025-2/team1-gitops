@@ -10,7 +10,6 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-question-worker
 spec:
-  # replicas управляется KEDA
   selector:
     matchLabels:
       app: question-worker

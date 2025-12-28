@@ -1,0 +1,15 @@
+{{- if .Values.namespace.create }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace.name | default .Release.Namespace }}
+  labels:
+    {{- if or .Values.istio.enabled (and .Values.global.istio .Values.global.istio.enabled) }}
+    istio-injection: enabled
+    {{- else }}
+    istio-injection: disabled
+    {{- end }}
+    name: {{ .Values.namespace.name | default .Release.Namespace }}
+{{- end }}
+

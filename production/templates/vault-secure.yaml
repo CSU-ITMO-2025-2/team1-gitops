@@ -1,7 +1,6 @@
 
 {{- if .Values.secrets.useExternal }}
 ---
-# PostgreSQL Secrets ONLY
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
@@ -21,7 +20,6 @@ spec:
         property: POSTGRES_PASSWORD
 
 ---
-# RabbitMQ Secrets ONLY
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
@@ -45,7 +43,6 @@ spec:
         property: RABBITMQ_DEFAULT_PASS
 
 ---
-# Core API Secrets (needs OpenAI, Postgres connection, RabbitMQ connection)
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
@@ -81,7 +78,6 @@ spec:
         property: RABBITMQ_DEFAULT_PASS
 
 ---
-# Workers Secrets (needs OpenAI, RabbitMQ)
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
@@ -113,7 +109,6 @@ spec:
         property: RABBITMQ_DEFAULT_PASS
 
 ---
-# Frontend Secrets (minimal - frontend uses only ConfigMap)
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:

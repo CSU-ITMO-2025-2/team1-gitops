@@ -1,0 +1,38 @@
+{{- if or .Values.istio.enabled (and .Values.global.istio .Values.global.istio.enabled) }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ .Release.Name }}-core-api-destinationrule
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: core-api
+    app.kubernetes.io/component: istio-circuit-breaker
+spec:
+  host: {{ .Release.Name }}-core-api
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: {{ .Values.istio.circuitBreaker.maxConnections | default 100 }}
+        connectTimeout: {{ .Values.istio.circuitBreaker.connectTimeout | default "30s" }}
+      http:
+        http1MaxPendingRequests: {{ .Values.istio.circuitBreaker.maxPendingRequests | default 10 }}
+        http2MaxRequests: {{ .Values.istio.circuitBreaker.maxRequests | default 100 }}
+        maxRequestsPerConnection: {{ .Values.istio.circuitBreaker.maxRequestsPerConnection | default 2 }}
+        maxRetries: {{ .Values.istio.circuitBreaker.maxRetries | default 3 }}
+        idleTimeout: {{ .Values.istio.circuitBreaker.idleTimeout | default "90s" }}
+    outlierDetection:
+      consecutiveErrors: {{ .Values.istio.circuitBreaker.consecutiveErrors | default 5 }}
+      interval: {{ .Values.istio.circuitBreaker.interval | default "30s" }}
+      baseEjectionTime: {{ .Values.istio.circuitBreaker.baseEjectionTime | default "30s" }}
+      maxEjectionPercent: {{ .Values.istio.circuitBreaker.maxEjectionPercent | default 50 }}
+      minHealthPercent: {{ .Values.istio.circuitBreaker.minHealthPercent | default 50 }}
+      splitExternalLocalOriginErrors: {{ .Values.istio.circuitBreaker.splitExternalLocalOriginErrors | default false }}
+      {{- if .Values.istio.circuitBreaker.detectingConsecutiveGatewayErrors }}
+      consecutiveGatewayErrors: {{ .Values.istio.circuitBreaker.detectingConsecutiveGatewayErrors }}
+      {{- end }}
+      {{- if .Values.istio.circuitBreaker.detectingConsecutive5xxErrors }}
+      consecutive5xxErrors: {{ .Values.istio.circuitBreaker.detectingConsecutive5xxErrors }}
+      {{- end }}
+{{- end }}
+

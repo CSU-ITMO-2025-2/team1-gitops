@@ -36,3 +36,20 @@ probes:
     periodSeconds: 5
     timeoutSeconds: 3
     failureThreshold: 3
+
+istio:
+  enabled: true
+  circuitBreaker:
+    maxConnections: 100
+    connectTimeout: "30s"
+    maxPendingRequests: 10
+    maxRequests: 100
+    maxRequestsPerConnection: 2
+    maxRetries: 3
+    idleTimeout: "90s"
+    consecutiveErrors: 5
+    interval: "30s"
+    baseEjectionTime: "30s"
+    maxEjectionPercent: 50
+    minHealthPercent: 50
+    splitExternalLocalOriginErrors: false
