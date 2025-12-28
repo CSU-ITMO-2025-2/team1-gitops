@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/csu-itmo-2025-2/team1-frontend
-  tag: sha-b2b3430
+  tag: sha-6c013d8
   pullPolicy: Always
 replicaCount: 1
 resources:
