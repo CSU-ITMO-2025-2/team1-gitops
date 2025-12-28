@@ -15,23 +15,23 @@ image:
     pullPolicy: Always
   coreApi:
     repository: ghcr.io/csu-itmo-2025-2/team1-core-api
-    tag: sha-fd233a5
+    tag: sha-c262c1a
     pullPolicy: Always
   frontend:
     repository: ghcr.io/csu-itmo-2025-2/team1-frontend
-    tag: sha-fd233a5
+    tag: sha-c262c1a
     pullPolicy: Always
   resumeWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
-    tag: sha-fd233a5
+    tag: sha-c262c1a
     pullPolicy: Always
   jobDescrWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
-    tag: sha-fd233a5
+    tag: sha-c262c1a
     pullPolicy: Always
   questionWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
-    tag: sha-fd233a5
+    tag: sha-c262c1a
     pullPolicy: Always
 # Resource requests/limits based on actual usage metrics
 # IMPORTANT: Current values are from IDLE state (no load)
@@ -107,7 +107,7 @@ rbac:
 job-description-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
-    tag: sha-fd233a5
+    tag: sha-c262c1a
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
@@ -125,7 +125,7 @@ job-description-service:
 question-generation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
-    tag: sha-fd233a5
+    tag: sha-c262c1a
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
@@ -143,7 +143,7 @@ question-generation-service:
 resume-evaluation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
-    tag: sha-fd233a5
+    tag: sha-c262c1a
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
