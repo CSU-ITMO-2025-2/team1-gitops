@@ -55,13 +55,14 @@ resources:
       memory: "512Mi"
 autoscaling:
   coreApi:
-    enabled: false
-    minReplicas: 1
+    enabled: true # Включено для отказоустойчивости
+    minReplicas: 2
     maxReplicas: 5
-    targetMemoryUtilization: 70
+    targetCPUUtilization: 70
+    targetMemoryUtilization: 80
   frontend:
-    enabled: false
-    minReplicas: 1
+    enabled: false # Отключено: Streamlit stateful, требует sticky sessions
+    minReplicas: 2
     maxReplicas: 5
     targetMemoryUtilization: 70
 rabbitmq:

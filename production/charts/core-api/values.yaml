@@ -2,7 +2,7 @@ image:
   repository: ghcr.io/csu-itmo-2025-2/team1-core-api
   tag: sha-fd233a5
   pullPolicy: Always
-replicaCount: 1
+replicaCount: 2
 resources:
   requests:
     cpu: "300m"
