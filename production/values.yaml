@@ -5,7 +5,6 @@ global:
     enabled: true
   istio:
     enabled: false
-
 namespace:
   create: false
   name: ""
@@ -20,23 +19,23 @@ image:
     pullPolicy: Always
   coreApi:
     repository: ghcr.io/csu-itmo-2025-2/team1-core-api
-    tag: sha-c262c1a
+    tag: sha-0162114
     pullPolicy: Always
   frontend:
     repository: ghcr.io/csu-itmo-2025-2/team1-frontend
-    tag: sha-c262c1a
+    tag: sha-0162114
     pullPolicy: Always
   resumeWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
-    tag: sha-c262c1a
+    tag: sha-0162114
     pullPolicy: Always
   jobDescrWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
-    tag: sha-c262c1a
+    tag: sha-0162114
     pullPolicy: Always
   questionWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
-    tag: sha-c262c1a
+    tag: sha-0162114
     pullPolicy: Always
 resources:
   coreApi:
@@ -102,7 +101,7 @@ rbac:
 job-description-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
-    tag: sha-c262c1a
+    tag: sha-0162114
     pullPolicy: Always
   configMap:
     name: ""
@@ -118,7 +117,7 @@ job-description-service:
 question-generation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
-    tag: sha-c262c1a
+    tag: sha-0162114
     pullPolicy: Always
   configMap:
     name: ""
@@ -134,7 +133,7 @@ question-generation-service:
 resume-evaluation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
-    tag: sha-c262c1a
+    tag: sha-0162114
     pullPolicy: Always
   configMap:
     name: ""
