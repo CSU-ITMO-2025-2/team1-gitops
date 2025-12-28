@@ -79,9 +79,9 @@ postgres:
   port: 5432
 ingress:
   enabled: true
-  host: ""
+  host: "team1-ns.kubepractice.ru"
   className: nginx
-  tls: false
+  tls: true
 env:
   openaiModelName: "gpt-4o-mini"
   openaiApiBase: "https://api.openai.com/v1"
