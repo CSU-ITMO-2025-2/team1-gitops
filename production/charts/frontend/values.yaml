@@ -1,6 +1,6 @@
 image:
-  repository: docker.io/erofeevdma/aith-team1-frontend
-  tag: b6453281e7413f3e35e8c7059130b503b763168e
+  repository: ghcr.io/csu-itmo-2025-2/team1-frontend
+  tag: sha-76523b9
   pullPolicy: Always
 
 replicaCount: 1
