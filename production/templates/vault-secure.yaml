@@ -63,6 +63,14 @@ spec:
       remoteRef:
         key: team1/shared
         property: OPENAI_API_KEY
+    - secretKey: OPENAI_API_BASE
+      remoteRef:
+        key: team1/shared
+        property: OPENAI_API_BASE
+    - secretKey: OPENAI_MODEL_NAME
+      remoteRef:
+        key: team1/shared
+        property: OPENAI_MODEL_NAME
     - secretKey: POSTGRES_PASSWORD
       remoteRef:
         key: team1/postgres
@@ -91,9 +99,35 @@ spec:
       remoteRef:
         key: team1/shared
         property: OPENAI_API_KEY
+    - secretKey: OPENAI_API_BASE
+      remoteRef:
+        key: team1/shared
+        property: OPENAI_API_BASE
+    - secretKey: OPENAI_MODEL_NAME
+      remoteRef:
+        key: team1/shared
+        property: OPENAI_MODEL_NAME
     - secretKey: RABBITMQ_DEFAULT_PASS
       remoteRef:
         key: team1/rabbitmq
         property: RABBITMQ_DEFAULT_PASS
+
+---
+# Frontend Secrets (minimal - frontend uses only ConfigMap)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ .Release.Name }}-frontend-secrets
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    kind: SecretStore
+    name: vault-team1
+  target:
+    name: {{ .Release.Name }}-frontend-secrets
+    creationPolicy: Owner
+  dataFrom:
+    - extract:
+        key: team1/frontend
 
 {{- end }}

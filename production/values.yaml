@@ -2,7 +2,7 @@ global:
   configMapName: "" # Будет использовано значение по умолчанию {{ .Release.Name }}-config
   secretName: "team-1-secrets" # Имя существующего secret. Если пусто, будет использовано значение по умолчанию {{ .Release.Name }}-secrets
   rbac:
-    enabled: false # Set to true to enable RBAC-based secret isolation (can be overridden in subcharts)
+    enabled: true # Set to true to enable RBAC-based secret isolation (can be overridden in subcharts)
 # Image pull secrets для GHCR
 imagePullSecrets:
   - name: ghcr-secret
@@ -15,23 +15,23 @@ image:
     pullPolicy: Always
   coreApi:
     repository: ghcr.io/csu-itmo-2025-2/team1-core-api
-    tag: sha-79af7ba
+    tag: sha-73c595f
     pullPolicy: Always
   frontend:
     repository: ghcr.io/csu-itmo-2025-2/team1-frontend
-    tag: sha-79af7ba
+    tag: sha-73c595f
     pullPolicy: Always
   resumeWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
-    tag: sha-79af7ba
+    tag: sha-73c595f
     pullPolicy: Always
   jobDescrWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
-    tag: sha-79af7ba
+    tag: sha-73c595f
     pullPolicy: Always
   questionWorker:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
-    tag: sha-79af7ba
+    tag: sha-73c595f
     pullPolicy: Always
 # Resource requests/limits based on actual usage metrics
 # IMPORTANT: Current values are from IDLE state (no load)
@@ -60,7 +60,7 @@ autoscaling:
     maxReplicas: 5
     targetMemoryUtilization: 70
   frontend:
-    enabled: true
+    enabled: false # Отключено: Streamlit stateful, требует sticky sessions
     minReplicas: 1
     maxReplicas: 5
     targetMemoryUtilization: 70
@@ -102,11 +102,11 @@ secrets:
   # Vault конфигурация не требуется
 # RBAC Configuration
 rbac:
-  enabled: false # Set to true to enable RBAC-based secret isolation
+  enabled: true # Set to true to enable RBAC-based secret isolation
 job-description-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-job-description-worker
-    tag: sha-79af7ba
+    tag: sha-73c595f
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
@@ -118,13 +118,13 @@ job-description-service:
     enabled: true # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
-    queueName: "job_description_queue"
+    queueName: "job_description_task"
     queueLength: 10 # Scale 1 replica per 10 messages in queue
     rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
 question-generation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-question-generation-worker
-    tag: sha-79af7ba
+    tag: sha-73c595f
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
@@ -136,13 +136,13 @@ question-generation-service:
     enabled: true # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
-    queueName: "question_generation_queue"
+    queueName: "question_generation_task"
     queueLength: 10 # Scale 1 replica per 10 messages in queue
     rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
 resume-evaluation-service:
   image:
     repository: ghcr.io/csu-itmo-2025-2/team1-resume-evaluation-worker
-    tag: sha-79af7ba
+    tag: sha-73c595f
     pullPolicy: Always
   # replicaCount управляется KEDA
   configMap:
@@ -154,7 +154,7 @@ resume-evaluation-service:
     enabled: true # Включено для production
     minReplicaCount: 1
     maxReplicaCount: 5
-    queueName: "resume_evaluation_queue"
+    queueName: "resume_evaluation_task"
     queueLength: 10 # Scale 1 replica per 10 messages in queue
     rabbitmqHost: "" # Will use RabbitMQ service name from parent chart
 networkPolicy:

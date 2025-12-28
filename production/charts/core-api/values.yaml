@@ -1,10 +1,8 @@
 image:
-  repository: docker.io/erofeevdma/aith-team1-core-api
-  tag: b6453281e7413f3e35e8c7059130b503b763168e
+  repository: ghcr.io/csu-itmo-2025-2/team1-core-api
+  tag: sha-73c595f
   pullPolicy: Always
-
 replicaCount: 1
-
 resources:
   requests:
     cpu: "300m"
@@ -12,20 +10,15 @@ resources:
   limits:
     cpu: "300m"
     memory: "512Mi"
-
 configMap:
   name: ""
-
 secret:
   name: ""
-
 service:
   port: 8000
   targetPort: 8000
-
 rbac:
   enabled: false
-
 probes:
   liveness:
     httpGet:
@@ -43,7 +36,3 @@ probes:
     periodSeconds: 5
     timeoutSeconds: 3
     failureThreshold: 3
-
-
-
-

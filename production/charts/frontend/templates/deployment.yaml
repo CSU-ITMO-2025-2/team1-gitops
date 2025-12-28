@@ -10,7 +10,7 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-frontend
 spec:
-  # replicas управляется HPA
+  replicas: 1  # Фиксированное количество реплик (HPA отключен для Streamlit)
   selector:
     matchLabels:
       app: frontend
