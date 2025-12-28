@@ -55,13 +55,14 @@ resources:
 # Autoscaling configuration
 autoscaling:
   coreApi:
-    enabled: false # Отключено: core-api использует Argo Rollout (не поддерживает HPA)
-    minReplicas: 1
+    enabled: true # Включено для отказоустойчивости
+    minReplicas: 2
     maxReplicas: 5
-    targetMemoryUtilization: 70
+    targetCPUUtilization: 70
+    targetMemoryUtilization: 80
   frontend:
     enabled: false # Отключено: Streamlit stateful, требует sticky sessions
-    minReplicas: 1
+    minReplicas: 2
     maxReplicas: 5
     targetMemoryUtilization: 70
 rabbitmq:

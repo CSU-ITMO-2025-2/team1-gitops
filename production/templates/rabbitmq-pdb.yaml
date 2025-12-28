@@ -1,0 +1,14 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}-rabbitmq-pdb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: rabbitmq
+    release: {{ .Release.Name }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+

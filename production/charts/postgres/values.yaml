@@ -5,6 +5,11 @@ port: 5432
 
 replicaCount: 1
 
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClass: "standard"
+
 resources:
   requests:
     cpu: "200m"
