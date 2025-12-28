@@ -1,6 +1,6 @@
 # Team1 GitOps Infrastructure
 
-> Production-ready Kubernetes deployment with ArgoCD, Argo Rollouts, KEDA autoscaling, and HashiCorp Vault integration
+> Production-ready Kubernetes deployment with ArgoCD, Argo Rollouts, and HashiCorp Vault integration
 
 ## 📋 Оглавление
 
@@ -10,7 +10,6 @@
 - [Argo Rollouts (Canary Deployment)](#argo-rollouts-canary-deployment)
 - [Автомасштабирование (KEDA)](#автомасштабирование-keda)
 - [Проблемы и решения](#проблемы-и-решения)
-- [CI/CD Pipeline](#cicd-pipeline)
 - [Как работать с проектом](#как-работать-с-проектом)
 
 ---
@@ -75,7 +74,7 @@ HashiCorp Vault (vault.kubepractice.ru)
 SecretStore (vault-team1)
      (syncs every 1m)
 ExternalSecret (создаёт K8s Secret)
-    
+
 Pod (монтирует как env переменные)
 ```
 
